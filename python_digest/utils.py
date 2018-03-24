@@ -1,5 +1,5 @@
 from io import StringIO
-from http import parse_quoted_string, parse_token
+from .http import parse_quoted_string, parse_token
 import logging
 
 # Make sure a NullHandler is available
