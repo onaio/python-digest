@@ -1,4 +1,4 @@
-from io import StringIO
+from io import BytesIO
 from .http import parse_quoted_string, parse_token
 import logging
 
@@ -192,8 +192,8 @@ class NewPartState(ParentState):
     def __init__(self, parts):
         super(NewPartState, self).__init__()
         self.parts = parts
-        self.key_io = StringIO()
-        self.value_io = StringIO()
+        self.key_io = BytesIO()
+        self.value_io = BytesIO()
 
     def consume(self, c):
         if c in _LWS:
