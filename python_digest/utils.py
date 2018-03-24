@@ -1,10 +1,5 @@
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
-
+from io import StringIO
 from http import parse_quoted_string, parse_token
-
 import logging
 
 # Make sure a NullHandler is available
