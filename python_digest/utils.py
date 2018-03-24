@@ -239,7 +239,7 @@ def parse_parts(parts_string, defaults={}):
             index += 1
         state_machine.close()
         return state_machine.result()
-    except ValueError, e:
+    except ValueError as e:
         annotated_parts_string = "%s[%s]%s" % (parts_string[0:index],
                                                index < len(parts_string) and parts_string[index] or '',
                                                index + 1 < len(parts_string) and parts_string[index+1:] or '')
