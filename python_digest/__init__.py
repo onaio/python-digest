@@ -109,7 +109,7 @@ def calculate_nonce(timestamp, secret, salt=None):
     if not salt:
         salt = ''.join([random.choice('0123456789ABCDEF') for x in range(4)])
     return "%s:%s:%s" % (timestamp, salt,
-                         md5.md5("%s:%s:%s" % (timestamp, salt, secret)).hexdigest())
+                         md5.md5(("%s:%s:%s" % (timestamp, salt, secret)).encode('utf-8')).hexdigest())
 
 def build_authorization_request(username, method, uri, nonce_count, digest_challenge=None,
                                 realm=None, nonce=None, opaque=None, password=None,
