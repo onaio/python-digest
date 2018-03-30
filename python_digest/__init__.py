@@ -6,6 +6,7 @@ except ImportError: # Python <2.5
 import random
 import types
 import urllib
+from builtins import str as text
 from future.moves.urllib.parse import urlparse
 
 from python_digest.utils import parse_parts, format_parts
@@ -135,7 +136,7 @@ def build_authorization_request(username, method, uri, nonce_count, digest_chall
                         "were sent.")
 
     if digest_challenge:
-        if isinstance(digest_challenge, types.StringType):
+        if isinstance(digest_challenge, (str, text)):
             digest_challenge_header = digest_challenge
             digest_challenge = parse_digest_challenge(digest_challenge_header)
             if not digest_challenge:
