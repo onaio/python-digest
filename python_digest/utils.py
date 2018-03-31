@@ -27,6 +27,12 @@ _ILLEGAL_TOKEN_CHARACTERS = (
     [chr(9)]) # horizontal tab
 
 
+def maybe_encode(c):
+    if not isinstance(c, text):
+        return c.decode('utf-8')
+    return c
+
+
 class State(object):
     def character(self, c):
         return self.consume(c)
@@ -93,7 +99,7 @@ class EscapedCharacterState(State):
         self.io = io
 
     def consume(self, c):
-        self.io.write(c)
+        self.io.write(maybe_encode(c))
         return True
 
 class KeyTrailingWhitespaceState(State):
@@ -118,7 +124,7 @@ class ValueLeadingWhitespaceState(ParentState):
         elif c in _ILLEGAL_TOKEN_CHARACTERS:
             raise ValueError('The character %r is not a legal token character' % c)
         else:
-            self.io.write(c)
+            self.io.write(maybe_encode(c))
             return self.push_child(UnquotedValueState(self.io))
 
     def child_complete(self, child):
@@ -147,7 +153,7 @@ class BaseQuotedState(ParentState):
         elif c == '"':
             return self.push_child(self.TrailingWhitespaceState())
         else:
-            self.key_io.write(c)
+            self.key_io.write(maybe_encode(c))
             return False
         
     def child_complete(self, child):
@@ -169,7 +175,7 @@ class BaseUnquotedState(ParentState):
         elif c in _ILLEGAL_TOKEN_CHARACTERS:
             raise ValueError('The character %r is not a legal token character' % c)
         else:
-            self.io.write(c)
+            self.io.write(maybe_encode(c))
             return False
         
     def child_complete(self, child):
@@ -208,7 +214,7 @@ class NewPartState(ParentState):
         elif c in _ILLEGAL_TOKEN_CHARACTERS:
             raise ValueError('The character %r is not a legal token character' % c)
         else:
-            self.key_io.write(c)
+            self.key_io.write(maybe_encode(c))
             return self.push_child(UnquotedKeyState(self.key_io))
 
     def child_complete(self, child):
