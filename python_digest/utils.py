@@ -1,6 +1,10 @@
-from io import BytesIO
-from .http import parse_quoted_string, parse_token
+from __future__ import unicode_literals
+
 import logging
+from io import StringIO
+from builtins import str as text
+
+from .http import parse_quoted_string, parse_token
 
 # Make sure a NullHandler is available
 # This was added in Python 2.7/3.2
@@ -21,6 +25,7 @@ _ILLEGAL_TOKEN_CHARACTERS = (
     [chr(127)] + # DEL
     ['(',')','<','>','@',',',';',':','\\','"','/','[',']','?','=','{','}',' '] +
     [chr(9)]) # horizontal tab
+
 
 class State(object):
     def character(self, c):
@@ -192,8 +197,8 @@ class NewPartState(ParentState):
     def __init__(self, parts):
         super(NewPartState, self).__init__()
         self.parts = parts
-        self.key_io = BytesIO()
-        self.value_io = BytesIO()
+        self.key_io = StringIO()
+        self.value_io = StringIO()
 
     def consume(self, c):
         if c in _LWS:
@@ -243,4 +248,4 @@ def parse_parts(parts_string, defaults={}):
         return None
 
 def format_parts(**kwargs):
-    return ", ".join(['%s="%s"' % (k,v.encode('utf-8')) for (k,v) in kwargs.items()])
+    return ", ".join(['%s="%s"' % (k,v) for (k,v) in kwargs.items()])

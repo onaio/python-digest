@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 try:
     import hashlib as md5
 except ImportError: # Python <2.5
@@ -5,9 +7,8 @@ except ImportError: # Python <2.5
     
 import random
 import types
-import urllib
 from builtins import str as text
-from future.moves.urllib.parse import urlparse
+from future.moves.urllib.parse import unquote, urlparse
 
 from python_digest.utils import parse_parts, format_parts
 
@@ -18,7 +19,7 @@ _REQUIRED_DIGEST_CHALLENGE_PARTS = ['realm', 'nonce', 'stale', 'algorithm',
 
 def validate_uri(digest_uri, request_path):
     digest_url_components = urlparse(digest_uri)
-    return urllib.unquote(digest_url_components[2]) == request_path
+    return unquote(digest_url_components[2]) == request_path
 
 def validate_nonce(nonce, secret):
     '''
@@ -82,9 +83,9 @@ def calculate_request_digest(method, partial_digest, digest_response=None,
     elif not (uri and nonce and (nonce_count != None) and client_nonce):
         raise Exception("Neither digest_response nor all individual parameters were sent.")
         
-    ha2 = md5.md5("%s:%s" % (method, uri)).hexdigest()
+    ha2 = md5.md5(("%s:%s" % (method, uri)).encode('utf-8')).hexdigest()
     data = "%s:%s:%s:%s:%s" % (nonce, "%08x" % nonce_count, client_nonce, 'auth', ha2)
-    kd = md5.md5("%s:%s" % (partial_digest, data)).hexdigest()
+    kd = md5.md5(("%s:%s" % (partial_digest, data)).encode('utf-8')).hexdigest()
     return kd
 
 def get_nonce_timestamp(nonce):
@@ -171,7 +172,7 @@ def _check_required_parts(parts, required_parts):
     return len(missing_parts) == 0
 
 def _build_object_from_parts(parts, names):
-    obj = type("", (), {})()
+    obj = type(str(''), (), {})()
     for part_name in names:
         setattr(obj, part_name, parts[part_name])
     return obj

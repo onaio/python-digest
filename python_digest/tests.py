@@ -1,6 +1,8 @@
+from __future__ import unicode_literals
+
 import unittest
 
-import StringIO
+from io import StringIO
 
 from python_digest import *
 from python_digest.http import *
@@ -158,7 +160,7 @@ class PythonDigestTests(unittest.TestCase):
                          '1263251163.72:0D93:6c012a9bc11e535ff2cddb54663e44bc')
 
     def test_unicode_credentials(self):
-        username = u"mickey\xe8\xe9"
+        username = 'mickey\xe8\xe9'
         challenge_header = \
             'Digest nonce="1263251163.72:0D93:6c012a9bc11e535ff2cddb54663e44bc", ' \
             'realm="API", algorithm="MD5", opaque="D80E5E5109EB9918993B5F886D14D2E5", ' \
@@ -167,7 +169,7 @@ class PythonDigestTests(unittest.TestCase):
             username=username, method='GET', uri='/api/accounts/account/erik/',
             nonce_count=3,password=username, digest_challenge=challenge_header)
         digest_response = parse_digest_credentials(request_header)
-        self.assertEqual(digest_response.username, 'mickey\xc3\xa8\xc3\xa9')
+        self.assertEqual(digest_response.username, username)
 
         kd = calculate_request_digest(
             'GET', calculate_partial_digest(username, 'API', username),
